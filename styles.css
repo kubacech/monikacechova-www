@@ -3,33 +3,49 @@ body, html {
     margin: 0;
     font: 400 15px/1.8 "Lato", sans-serif;
     color: #777;
+    overflow: hidden;
 }
-  
+
 .bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    transition: opacity 1s ease-in-out;
 }
-  
+
+#bg1 {
+    z-index: 0;
+}
+
+#bg2 {
+    z-index: 1;
+    opacity: 0;
+}
+
 .caption {
-    position: absolute;
+    position: fixed;
     left: 0;
-    top: 90%;
+    bottom: clamp(16px, 5vh, 48px);
     width: 100%;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    box-sizing: border-box;
     text-align: center;
     color: #000;
+    z-index: 10;
 }
-  
+
 .caption span.border {
     background-color: #111;
     color: #fff;
-    padding: 18px;
-    font-size: 25px;
-    letter-spacing: 10px;
+    padding: 14px 18px;
+    font-size: clamp(16px, 4vw, 25px);
+    letter-spacing: clamp(4px, 2vw, 10px);
 }
-  
