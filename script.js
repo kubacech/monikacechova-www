@@ -1,6 +1,6 @@
 var IMAGE_NAMES = [
     "IMG13", "IMG14", "IMG3", "IMG5", "IMG6",
-    "IMG7", "IMG8", "IMG9", "IMG10", "IMG1", "IMG2"
+    "IMG7", "IMG8", "IMG10", "IMG1", "IMG2"
 ];
 
 var currentIndex = 0;
