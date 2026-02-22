@@ -4,8 +4,9 @@ var IMAGE_NAMES = [
 ];
 
 var currentIndex = 0;
-var activeBg = 1; // tracks which bg div is currently visible (1 or 2)
+var activeBg = 1;
 var supportsWebP = false;
+var transitioning = false;
 
 // Detect WebP support
 function checkWebP(callback) {
@@ -15,9 +16,10 @@ function checkWebP(callback) {
     img.src = "data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA";
 }
 
-// Pick the right size based on screen
+// Pick the right size based on screen, cap DPR at 2 to avoid oversized images
 function getSizeBreakpoint() {
-    var w = window.innerWidth * (window.devicePixelRatio || 1);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = window.innerWidth * dpr;
     if (w <= 640) return "640w";
     if (w <= 1024) return "1024w";
     return "1920w";
@@ -40,11 +42,13 @@ function preloadImage(url, callback) {
 
 // Prefetch the next image in the rotation
 function prefetchNext() {
-    var nextIndex = (currentIndex + 1) % IMAGE_NAMES.length;
+    var nextIndex = (currentIndex) % IMAGE_NAMES.length;
     preloadImage(getImageUrl(IMAGE_NAMES[nextIndex]));
 }
 
 function changeImage() {
+    if (transitioning) return;
+
     if (currentIndex >= IMAGE_NAMES.length) {
         currentIndex = 0;
     }
@@ -64,13 +68,19 @@ function changeImage() {
 
     // Set the new image on the hidden layer, then crossfade
     showBg.style.backgroundImage = "url(" + url + ")";
+    transitioning = true;
     showBg.style.opacity = "1";
     hideBg.style.opacity = "0";
 
     currentIndex++;
 
-    // Prefetch the next image after a short delay
-    setTimeout(prefetchNext, 1000);
+    // Wait for the CSS transition to finish before allowing the next change
+    showBg.addEventListener("transitionend", function onEnd() {
+        showBg.removeEventListener("transitionend", onEnd);
+        transitioning = false;
+        // Prefetch the next image once the transition completes
+        prefetchNext();
+    });
 }
 
 checkWebP(function (supported) {
